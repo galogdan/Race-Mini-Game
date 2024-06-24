@@ -1,0 +1,89 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/three_lanes">
+
+
+    <!-- Lives -->
+    <LinearLayout
+        android:id="@+id/livesLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/layout_margin">
+
+        <ImageView
+            android:id="@+id/life1"
+            android:layout_width="@dimen/life_size"
+            android:layout_height="@dimen/life_size"
+            android:src="@drawable/heart" />
+
+        <ImageView
+            android:id="@+id/life2"
+            android:layout_width="@dimen/life_size"
+            android:layout_height="@dimen/life_size"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/heart" />
+
+        <ImageView
+            android:id="@+id/life3"
+            android:layout_width="@dimen/life_size"
+            android:layout_height="@dimen/life_size"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/heart" />
+    </LinearLayout>
+
+    <!-- Game Area -->
+    <RelativeLayout
+        android:id="@+id/gameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@+id/buttonLayout"
+        android:layout_below="@+id/livesLayout">
+
+        <!-- Car -->
+        <ImageView
+            android:id="@+id/car1"
+            android:layout_width="@dimen/car_size"
+            android:layout_height="@dimen/car_size"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/layout_bottom_margin"
+            android:src="@drawable/car1"
+            android:contentDescription="@string/car"
+            android:layout_alignStart=""/>
+
+    </RelativeLayout>
+
+    <!-- Control Buttons -->
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="@dimen/layout_margin">
+
+        <Button
+            android:id="@+id/left_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/left"
+            android:background="@color/white"
+            android:textColor="@color/black"
+            android:padding="@dimen/button_padding"
+            android:layout_marginEnd="@dimen/button_margin_end"/>
+
+        <Button
+            android:id="@+id/right_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/right"
+            android:background="@color/white"
+            android:textColor="@color/black"
+            android:padding="@dimen/button_padding" />
+    </LinearLayout>
+</RelativeLayout>
