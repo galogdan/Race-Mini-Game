@@ -3,4 +3,5 @@
     <string name="car">Car</string>
     <string name="left">Left</string>
     <string name="right">Right</string>
+    <string name="life">Right</string>
 </resources>

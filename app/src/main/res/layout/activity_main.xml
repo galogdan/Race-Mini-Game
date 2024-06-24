@@ -3,7 +3,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/three_lanes">
 
-
     <!-- Lives -->
     <LinearLayout
         android:id="@+id/livesLayout"
@@ -12,27 +11,30 @@
         android:orientation="horizontal"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/layout_margin">
+        android:layout_margin="16dp">
 
         <ImageView
             android:id="@+id/life1"
-            android:layout_width="@dimen/life_size"
-            android:layout_height="@dimen/life_size"
-            android:src="@drawable/heart" />
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/heart"
+            android:contentDescription="@string/life"/>
 
         <ImageView
             android:id="@+id/life2"
-            android:layout_width="@dimen/life_size"
-            android:layout_height="@dimen/life_size"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginStart="4dp"
-            android:src="@drawable/heart" />
+            android:src="@drawable/heart"
+            android:contentDescription="@string/life"/>
 
         <ImageView
             android:id="@+id/life3"
-            android:layout_width="@dimen/life_size"
-            android:layout_height="@dimen/life_size"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginStart="4dp"
-            android:src="@drawable/heart" />
+            android:src="@drawable/heart"
+            android:contentDescription="@string/life"/>
     </LinearLayout>
 
     <!-- Game Area -->
@@ -46,14 +48,13 @@
         <!-- Car -->
         <ImageView
             android:id="@+id/car1"
-            android:layout_width="@dimen/car_size"
-            android:layout_height="@dimen/car_size"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/layout_bottom_margin"
+            android:layout_marginBottom="16dp"
             android:src="@drawable/car1"
-            android:contentDescription="@string/car"/>
-
+            android:contentDescription="@string/car" />
     </RelativeLayout>
 
     <!-- Control Buttons -->
@@ -64,7 +65,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:gravity="center"
-        android:padding="@dimen/layout_margin">
+        android:padding="16dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/left_button"
@@ -72,7 +73,7 @@
             android:layout_height="wrap_content"
             android:text="@string/left"
             style="@style/CustomButtonStyle"
-            android:layout_marginEnd="64dp"/>
+            android:layout_marginEnd="@dimen/button_margin_end"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/right_button"
