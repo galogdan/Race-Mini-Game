@@ -4,6 +4,6 @@
     <dimen name="life_size">32dp</dimen>
     <dimen name="obstacle_size">100dp</dimen>
     <dimen name="car_size">80dp</dimen>
-    <dimen name="layout_margin">16dp</dimen>
+    <dimen name="layout_margin">64dp</dimen>
     <dimen name="layout_bottom_margin">16dp</dimen>
 </resources>

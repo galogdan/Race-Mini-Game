@@ -52,8 +52,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/layout_bottom_margin"
             android:src="@drawable/car1"
-            android:contentDescription="@string/car"
-            android:layout_alignStart=""/>
+            android:contentDescription="@string/car"/>
 
     </RelativeLayout>
 
@@ -67,23 +66,19 @@
         android:gravity="center"
         android:padding="@dimen/layout_margin">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/left_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/left"
-            android:background="@color/white"
-            android:textColor="@color/black"
-            android:padding="@dimen/button_padding"
-            android:layout_marginEnd="@dimen/button_margin_end"/>
+            style="@style/CustomButtonStyle"
+            android:layout_marginEnd="64dp"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/right_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/right"
-            android:background="@color/white"
-            android:textColor="@color/black"
-            android:padding="@dimen/button_padding" />
+            style="@style/CustomButtonStyle"/>
     </LinearLayout>
 </RelativeLayout>
