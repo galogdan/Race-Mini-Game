@@ -13,14 +13,14 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="16dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/life1"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/heart"
             android:contentDescription="@string/life"/>
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/life2"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -28,7 +28,7 @@
             android:src="@drawable/heart"
             android:contentDescription="@string/life"/>
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/life3"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -46,7 +46,7 @@
         android:layout_below="@+id/livesLayout">
 
         <!-- Car -->
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/car1"
             android:layout_width="100dp"
             android:layout_height="100dp"
