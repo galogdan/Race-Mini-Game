@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,10 +26,10 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout livesLayout;
     private Button leftButton, rightButton;
     private int lives = 3;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Vibrator vibrator;
 
-    private int currentLane = 1; // 0: left, 1: center, 2: right
+    private int currentLane = 1; // 0 - left, 1 - center, 2 - right
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +37,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Log.d(TAG, "onCreate: Initializing views");
+        findViews();
+        initViews();
+        Log.d(TAG, "onCreate: Starting game");
+        startGame();
+    }
+
+    private void findViews() {
         gameLayout = findViewById(R.id.gameLayout);
         car = findViewById(R.id.car1);
         livesLayout = findViewById(R.id.livesLayout);
         leftButton = findViewById(R.id.left_button);
         rightButton = findViewById(R.id.right_button);
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    }
 
+    private void initViews() {
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         leftButton.setOnClickListener(v -> {
             Log.d(TAG, "onClick: Left button clicked");
             moveCar(-1);
@@ -53,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onClick: Right button clicked");
             moveCar(1);
         });
-
-        Log.d(TAG, "onCreate: Starting game");
-        startGame();
     }
 
     private void moveCar(int direction) {
@@ -82,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         handler.post(obstacleGenerator);
     }
 
-    private Runnable obstacleGenerator = new Runnable() {
+    private final Runnable obstacleGenerator = new Runnable() {
         @Override
         public void run() {
             Log.d(TAG, "run: Generating obstacle");
@@ -94,17 +99,20 @@ public class MainActivity extends AppCompatActivity {
     private void generateObstacle() {
         Log.d(TAG, "generateObstacle: Creating new obstacle");
         ImageView obstacle = new ImageView(MainActivity.this);
-        obstacle.setImageResource(R.drawable.stop1);;
+        obstacle.setImageResource(R.drawable.stop2);
         int lane = new Random().nextInt(3);
+        int obstacleMargin = 75; // Align obstacle in lane
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                500, 500);
+                250, 250);
         params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         if (lane == 0) {
             params.addRule(RelativeLayout.ALIGN_PARENT_START);
+            params.setMarginStart(obstacleMargin);
         } else if (lane == 1) {
             params.addRule(RelativeLayout.CENTER_HORIZONTAL);
         } else {
             params.addRule(RelativeLayout.ALIGN_PARENT_END);
+            params.setMarginEnd(obstacleMargin);
         }
         obstacle.setLayoutParams(params);
         gameLayout.addView(obstacle);
