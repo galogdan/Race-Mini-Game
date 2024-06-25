@@ -11,28 +11,28 @@
         android:orientation="horizontal"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="16dp">
+        android:layout_margin="@dimen/layout_margin">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/life1"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/life_size"
+            android:layout_height="@dimen/life_size"
             android:src="@drawable/heart"
             android:contentDescription="@string/life"/>
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/life2"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="4dp"
+            android:layout_width="@dimen/life_size"
+            android:layout_height="@dimen/life_size"
+            android:layout_marginStart="@dimen/life_margin"
             android:src="@drawable/heart"
             android:contentDescription="@string/life"/>
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/life3"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="4dp"
+            android:layout_width="@dimen/life_size"
+            android:layout_height="@dimen/life_size"
+            android:layout_marginStart="@dimen/life_margin"
             android:src="@drawable/heart"
             android:contentDescription="@string/life"/>
     </LinearLayout>
@@ -48,11 +48,11 @@
         <!-- Car -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/car1"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="@dimen/car_size"
+            android:layout_height="@dimen/car_size"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="@dimen/layout_margin"
             android:src="@drawable/car1"
             android:contentDescription="@string/car" />
     </RelativeLayout>
@@ -65,7 +65,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:gravity="center"
-        android:padding="16dp">
+        android:padding="@dimen/layout_margin">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/left_button"
