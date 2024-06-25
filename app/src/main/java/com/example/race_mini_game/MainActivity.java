@@ -1,5 +1,6 @@
 package com.example.race_mini_game;
 
+import android.os.VibrationEffect;
 import android.view.Gravity;
 import android.view.View;
 import android.content.Context;
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     if (vibrator.hasVibrator()) {
-                        vibrator.vibrate(500);
+                        vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
                     }
 
                     lives--;
