@@ -1,0 +1,51 @@
+<!-- res/layout/activity_menu.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@drawable/five_lanes_new"
+    tools:context=".MenuActivity">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/startGameButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Game"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="20dp"
+        style="@style/CustomButtonStyle"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sensorModeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sensor Mode"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/startGameButton"
+        android:layout_marginTop="20dp"
+        style="@style/CustomButtonStyle"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fastSlowModeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fast/Slow Mode"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/sensorModeButton"
+        android:layout_marginTop="20dp"
+        style="@style/CustomButtonStyle"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/leaderboardsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Leaderboards"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/fastSlowModeButton"
+        android:layout_marginTop="20dp"
+        style="@style/CustomButtonStyle"/>
+
+</RelativeLayout>

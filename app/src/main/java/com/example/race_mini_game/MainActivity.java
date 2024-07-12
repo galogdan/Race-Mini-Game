@@ -1,179 +1,332 @@
 package com.example.race_mini_game;
 
-import android.os.VibrationEffect;
-import android.view.Gravity;
-import android.view.View;
-import android.content.Context;
-import android.graphics.Rect;
+import android.location.Location;
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Vibrator;
+import android.text.InputType;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.location.FusedLocationProviderClient;
 
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-import java.util.Random;
+import com.example.race_mini_game.Interfaces.MoveCallback;
+import com.example.race_mini_game.Logic.GameManager;
+import com.example.race_mini_game.Utils.MoveDetector;
+import com.example.race_mini_game.Models.Leaderboards;
+import com.google.android.gms.location.LocationServices;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GameManager.GameCallback {
 
     private static final String TAG = "MainActivity";
+    private static final int PERMISSION_REQUEST_VIBRATE = 1001;
+    private static final int PERMISSION_REQUEST_LOCATION = 1002;
+    private Location lastKnownLocation;
+    private FusedLocationProviderClient fusedLocationClient;
+    private RelativeLayout mainLayout;
     private RelativeLayout gameLayout;
-    private ImageView car;
-    private LinearLayout livesLayout;
+    private ImageView playerView;
     private Button leftButton, rightButton;
-    private int lives = 3;
-    private final Handler handler = new Handler();
-    private Vibrator vibrator;
+    private ImageView[] heartViews;
+    private TextView scoreTextView;
+    private TextView distanceTextView;
 
-    private int currentLane = 1; // 0 - left, 1 - center, 2 - right
+    private int playerWidth;
+    private int playerHeight;
+    private int obstacleWidth;
+    private int obstacleHeight;
+    private int coinWidth;
+    private int coinHeight;
+    private GameManager gameManager;
+    private MoveDetector moveDetector;
+    private boolean sensorMode;
+    private boolean fastMode;
+    private Leaderboards leaderboards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d(TAG, "onCreate: Initializing views");
-        findViews();
-        initViews();
-        Log.d(TAG, "onCreate: Starting game");
-        startGame();
+
+        float density = getResources().getDisplayMetrics().density;
+        playerWidth = (int) (100f * density);
+        playerHeight = (int) (100f * density);
+        obstacleWidth = (int) (30f * density);
+        obstacleHeight = (int) (100f * density);
+        coinWidth = (int) (30f * density); // Define coin width
+        coinHeight = (int) (30f * density); // Define coin height
+        Intent intent = getIntent();
+        sensorMode = intent.getBooleanExtra("sensorMode", false);
+        fastMode = intent.getBooleanExtra("fastMode", false);
+
+        if (sensorMode) {
+
+            // Initialize MoveDetector
+            moveDetector = new MoveDetector(this, new MoveCallback() {
+                @Override
+                public void onMoveLeft() {
+                    movePlayerLeft();
+                }
+
+                @Override
+                public void onMoveRight() {
+                    movePlayerRight();
+                }
+            });
+        }
+        initializeViews();
+
+        leaderboards = new Leaderboards(this);
+        gameManager = new GameManager(this, gameLayout, playerView, heartViews,
+                playerWidth, playerHeight, obstacleWidth, obstacleHeight, coinWidth, coinHeight, fastMode);
+        gameManager.setGameCallback(this);
+        gameManager.setLeaderboards(leaderboards);
+
+        // Set the distance change listener
+        gameManager.setOnDistanceChangeListener(distance -> runOnUiThread(() -> distanceTextView.setText(String.format("Distance: %.2f Km", distance))));
+
+        requestVibratePermission();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        requestLocationPermission();
+
+        gameLayout.post(this::calculateLanePositions);
     }
 
-    private void findViews() {
+    private void movePlayerRight() {
+        movePlayer(1);
+    }
+
+    private void movePlayerLeft() {
+        movePlayer(-1);
+    }
+
+    private void initializeViews() {
+
         gameLayout = findViewById(R.id.gameLayout);
-        car = findViewById(R.id.car1);
-        livesLayout = findViewById(R.id.livesLayout);
+        playerView = findViewById(R.id.car1);
         leftButton = findViewById(R.id.left_button);
         rightButton = findViewById(R.id.right_button);
+        heartViews = new ImageView[]{
+                findViewById(R.id.life1),
+                findViewById(R.id.life2),
+                findViewById(R.id.life3)
+        };
+        scoreTextView = findViewById(R.id.scoreTextView);
+        distanceTextView = findViewById(R.id.distanceTextView);
+
+        leftButton.setOnClickListener(v -> movePlayer(-1));
+        rightButton.setOnClickListener(v -> movePlayer(1));
+        if (sensorMode) {
+            findViewById(R.id.left_button).setVisibility(View.GONE);
+            findViewById(R.id.right_button).setVisibility(View.GONE);
+        }
     }
 
-    private void initViews() {
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        leftButton.setOnClickListener(v -> {
-            Log.d(TAG, "onClick: Left button clicked");
-            moveCar(-1);
-        });
-        rightButton.setOnClickListener(v -> {
-            Log.d(TAG, "onClick: Right button clicked");
-            moveCar(1);
-        });
+    private void calculateLanePositions() {
+        gameManager.calculateLanePositions();
     }
 
-    private void moveCar(int direction) {
-        if ((currentLane == 0 && direction == -1) || (currentLane == 2 && direction == 1)) {
-            return; // Cannot move out of bounds
+    private void requestVibratePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.VIBRATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.VIBRATE},
+                    PERMISSION_REQUEST_VIBRATE);
         }
-        currentLane += direction;
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) car.getLayoutParams();
-        params.removeRule(RelativeLayout.ALIGN_PARENT_START);
-        params.removeRule(RelativeLayout.CENTER_HORIZONTAL);
-        params.removeRule(RelativeLayout.ALIGN_PARENT_END);
-        if (currentLane == 0) {
-            params.addRule(RelativeLayout.ALIGN_PARENT_START);
-        } else if (currentLane == 1) {
-            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        } else {
-            params.addRule(RelativeLayout.ALIGN_PARENT_END);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_VIBRATE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Vibration permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Vibration permission denied. Some features may be limited.", Toast.LENGTH_LONG).show();
+            }
         }
-        car.setLayoutParams(params);
+    }
+
+    private void movePlayer(int direction) {
+        gameManager.movePlayer(direction);
     }
 
     private void startGame() {
-        Log.d(TAG, "startGame: Starting obstacle generator");
-        handler.post(obstacleGenerator);
+        gameManager.startGame();
     }
 
-    private final Runnable obstacleGenerator = new Runnable() {
-        @Override
-        public void run() {
-            Log.d(TAG, "run: Generating obstacle");
-            generateObstacle();
-            handler.postDelayed(this, 2000);
-        }
-    };
-
-    private void generateObstacle() {
-        Log.d(TAG, "generateObstacle: Creating new obstacle");
-        ImageView obstacle = new ImageView(MainActivity.this);
-        obstacle.setImageResource(R.drawable.stop2);
-        int lane = new Random().nextInt(3);
-        int obstacleMargin = 75; // Align obstacle in lane
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                250, 250);
-        params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        if (lane == 0) {
-            params.addRule(RelativeLayout.ALIGN_PARENT_START);
-            params.setMarginStart(obstacleMargin);
-        } else if (lane == 1) {
-            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        } else {
-            params.addRule(RelativeLayout.ALIGN_PARENT_END);
-            params.setMarginEnd(obstacleMargin);
-        }
-        obstacle.setLayoutParams(params);
-        gameLayout.addView(obstacle);
-
-        checkCollision(obstacle);
-
-        obstacle.animate().translationY(gameLayout.getHeight())
-                .setDuration(3000)
-                .withEndAction(() -> gameLayout.removeView(obstacle)).start();
+    private void stopGame() {
+        gameManager.stopGame();
     }
 
-    private void checkCollision(ImageView obstacle) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Rect obstacleRect = new Rect();
-                obstacle.getHitRect(obstacleRect);
-                Rect carRect = new Rect();
-                car.getHitRect(carRect);
+    @Override
+    public void onGameOver() {
+        runOnUiThread(() -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Game Over")
+                    .setMessage("You've lost all your lives!")
+                    .setCancelable(false)
+                    .setPositiveButton("Restart", (dialog, id) -> {
+                        dialog.dismiss();
+                        restartGame();
+                    });
 
-                if (Rect.intersects(obstacleRect, carRect)) {
-                    Log.d(TAG, "checkCollision: Collision detected");
-                    Toast toast = Toast.makeText(MainActivity.this, "Crash!", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    if (vibrator.hasVibrator()) {
-                        vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                    }
+            AlertDialog gameOverDialog = builder.create();
+            gameOverDialog.show();
+        });
+    }
 
-                    lives--;
-                    updateLivesUI();
-
-                    if (lives == 0) {
-                        Log.d(TAG, "checkCollision: Game over, resetting game");
-                        handler.removeCallbacks(obstacleGenerator);
-                        handler.postDelayed(() -> resetGame(), 2000);
-                    }
-                } else {
-                    handler.postDelayed(this, 50); // Check collision every 50ms
-                }
+    @Override
+    public void onLivesUpdated(int lives) {
+        runOnUiThread(() -> {
+            for (int i = 0; i < heartViews.length; i++) {
+                heartViews[i].setVisibility(i < lives ? View.VISIBLE : View.INVISIBLE);
             }
         });
     }
 
-    private void updateLivesUI() {
-        Log.d(TAG, "updateLivesUI: Updating lives display");
-        for (int i = 0; i < livesLayout.getChildCount(); i++) {
-            ImageView life = (ImageView) livesLayout.getChildAt(i);
-            if (i < lives) {
-                life.setVisibility(View.VISIBLE);
+    @Override
+    public void onScoreUpdated(int score) {
+        runOnUiThread(() -> scoreTextView.setText("Score: " + score));
+    }
+
+    public void onNewHighScore(int finalScore) {
+        Log.d("MainActivity", "onNewHighScore called with score: " + finalScore);
+        runOnUiThread(() -> showHighScoreDialog(finalScore));
+    }
+
+    private void showHighScoreDialog(int finalScore) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("New High Score!");
+        builder.setMessage("Congratulations! You've achieved a high score of " + finalScore);
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String playerName = input.getText().toString();
+            if (lastKnownLocation != null) {
+                leaderboards.addScore(playerName, finalScore, lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
             } else {
-                life.setVisibility(View.INVISIBLE);
+                leaderboards.addScore(playerName, finalScore, 0, 0); // Use default coordinates if location is unavailable
             }
+            openLeaderboard();
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            dialog.cancel();
+            returnToMenu();
+        });
+
+        builder.show();
+    }
+
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        if (fusedLocationClient != null) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
+                        if (location != null) {
+                            lastKnownLocation = location;
+                        }
+                    });
         }
     }
 
-    private void resetGame() {
-        Log.d(TAG, "resetGame: Resetting game");
-        lives = 3;
-        updateLivesUI();
+    private void openLeaderboard() {
+        Intent intent = new Intent(MainActivity.this, LeaderboardActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void returnToMenu() {
+        Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void onGameOver(int finalScore) {
+        runOnUiThread(() -> showGameOverDialog(finalScore));
+    }
+
+    private void showGameOverDialog(int finalScore) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Game Over")
+                .setMessage("Your final score: " + finalScore)
+                .setPositiveButton("Restart", (dialog, id) -> restartGame())
+                .setNegativeButton("Main Menu", (dialog, id) -> returnToMenu());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_REQUEST_LOCATION);
+        } else {
+            startLocationUpdates();
+        }
+    }
+
+
+
+    private void restartGame() {
+        stopGame();
         startGame();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!gameManager.isGameRunning()) {
+            startGame();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopGame();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!gameManager.isGameRunning()) {
+            startGame();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopGame();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        gameManager.release();
+        stopGame();
     }
 }
