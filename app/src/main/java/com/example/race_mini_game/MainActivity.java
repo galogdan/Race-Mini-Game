@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
     private static final String TAG = "MainActivity";
     private static final int PERMISSION_REQUEST_VIBRATE = 1001;
     private static final int PERMISSION_REQUEST_LOCATION = 1002;
+    private static final float OBSTACLE_SIZE = 30f;
+    private static final float PLAYER_SIZE = 65f;
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationClient;
     private RelativeLayout gameLayout;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
     private ImageView[] heartViews;
     private TextView scoreTextView;
     private TextView distanceTextView;
+
+
 
     private int playerWidth;
     private int playerHeight;
@@ -63,10 +66,10 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
 
 
         float density = getResources().getDisplayMetrics().density;
-        playerWidth = (int) (65f * density);
-        playerHeight = (int) (65f * density);
-        obstacleWidth = (int) (30f * density);
-        obstacleHeight = (int) (100f * density);
+        playerWidth = (int) (PLAYER_SIZE * density);
+        playerHeight = (int) (PLAYER_SIZE * density);
+        obstacleWidth = (int) (OBSTACLE_SIZE * density);
+        obstacleHeight = (int) (OBSTACLE_SIZE * density);
         coinWidth = (int) (30f * density); // Define coin width
         coinHeight = (int) (30f * density); // Define coin height
         Intent intent = getIntent();
@@ -98,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
         gameManager.setGameCallback(this);
         gameManager.setLeaderboards(leaderboards);
 
-        // Set the distance change listener
+        // set the distance change listener
         gameManager.setOnDistanceChangeListener(distance -> runOnUiThread(() -> distanceTextView.setText(String.format("Distance: %.2f Km", distance))));
 
         requestVibratePermission();
@@ -310,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
 
 
 
+
     private void restartGame() {
         stopGame();
         startGame();
@@ -326,6 +330,8 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
     @Override
     protected void onPause() {
         super.onPause();
+        if (sensorMode)
+            moveDetector.stop();
         stopGame();
     }
 
@@ -340,6 +346,8 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
     @Override
     protected void onStop() {
         super.onStop();
+        if (sensorMode)
+            moveDetector.stop();
         stopGame();
     }
 
@@ -347,6 +355,8 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
     protected void onDestroy() {
         super.onDestroy();
         gameManager.release();
+        if (sensorMode)
+            moveDetector.stop();
         stopGame();
     }
 }

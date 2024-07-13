@@ -35,7 +35,6 @@ public class GameManager {      // Handles the game logic
     private static final long OBSTACLE_SPAWN_DELAY = 500; // 0.5 seconds
     private static final long GAME_LOOP_DELAY = 8;
 
-
     private Context context;
     private RelativeLayout gameLayout;
     private ImageView playerView;
@@ -275,7 +274,6 @@ public class GameManager {      // Handles the game logic
                 if (gameCallback != null) {
                     gameCallback.onScoreUpdated(score);
                 }
-                //Toast.makeText(context, "Coin collected! Score: " + score, Toast.LENGTH_SHORT).show();
                 return true;
             }
         }
@@ -290,7 +288,7 @@ public class GameManager {      // Handles the game logic
         vibrate();
         soundPlayer.stopSound();
 
-        // Show toast message on collision
+        // show toast message on collision
         Toast.makeText(context, "Collision detected!", Toast.LENGTH_SHORT).show();
 
         if (lives <= 0) {
@@ -385,7 +383,7 @@ public class GameManager {      // Handles the game logic
     }
 
 
-    // Inside the update method, update the distance and notify the listener
+    // inside the update method, update the distance and notify the listener
     public void update(long deltaTime) {
         float speed = OBSTACLE_SPEED;
         if (fastMode)
@@ -428,7 +426,6 @@ public class GameManager {      // Handles the game logic
 
         }
     }
-
 
 
     public void release() {

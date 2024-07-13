@@ -2,7 +2,6 @@ package com.example.race_mini_game.Fragments;
 
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +68,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {   // M
     public void showRecordLocation(Record record) {
 
         if (mMap != null) {
-            Log.d("Adding Score"," " +record.getLatitude() +"  "+ record.getLongitude());
             LatLng recordLocation = new LatLng(record.getLatitude(), record.getLongitude());
             mMap.clear();
             mMap.addMarker(new MarkerOptions().position(recordLocation).title(record.getName() + ": " + record.getScore()));

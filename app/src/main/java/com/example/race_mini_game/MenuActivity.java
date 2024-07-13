@@ -59,7 +59,6 @@ public class MenuActivity extends AppCompatActivity {       // Menu activity
                     fastSlowModeButton.setText(R.string.slow_mode);
                     Intent intent = new Intent(MenuActivity.this, MainActivity.class);
                     intent.putExtra("fastMode", true);
-                    //startActivity(intent);
                 }
                 else {
                     fastMode = false;

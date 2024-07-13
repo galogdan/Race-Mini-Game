@@ -8,11 +8,12 @@ import com.example.race_mini_game.Interfaces.MoveCallback;
 
 public class MoveDetector implements SensorEventListener {      // MoveDetector for sensor mode
 
-    private static final float MOVE_THRESHOLD = 2.5f;
-    private static final float SENSOR_CONSTANT = 0.1f;
+    private static final float MOVE_THRESHOLD = 2f;
+    private static final float SENSOR_DELAY = 350;
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private MoveCallback moveCallback;
+    private long timestamp = 0l;
 
 
     public MoveDetector(Context context, MoveCallback moveCallback) {
@@ -33,12 +34,14 @@ public class MoveDetector implements SensorEventListener {      // MoveDetector 
     @Override
     public void onSensorChanged(SensorEvent event) {
         float x = event.values[0];
+        if (System.currentTimeMillis() - timestamp > SENSOR_DELAY) {
+            timestamp = System.currentTimeMillis();
 
-
-        if (x > MOVE_THRESHOLD) {
-            moveCallback.onMoveLeft();
-        } else if (x < -MOVE_THRESHOLD) {
-            moveCallback.onMoveRight();
+            if (x > MOVE_THRESHOLD) {
+                moveCallback.onMoveLeft();
+            } else if (x < -MOVE_THRESHOLD) {
+                moveCallback.onMoveRight();
+            }
         }
     }
 

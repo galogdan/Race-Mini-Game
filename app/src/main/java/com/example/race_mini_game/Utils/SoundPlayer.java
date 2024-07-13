@@ -18,12 +18,14 @@ public class SoundPlayer {      // SoundPlayer for sound effects
     }
 
     public void playSound(int resID) {
-        if (mediaPlayer == null)
-            executor.execute(() -> {
-                mediaPlayer = MediaPlayer.create(context, resID);
-                mediaPlayer.setLooping(false);
-                mediaPlayer.setVolume(1.0f, 1.0f);
-                mediaPlayer.start();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        executor.execute(() -> {
+            mediaPlayer = MediaPlayer.create(context, resID);
+            mediaPlayer.setVolume(1.0f, 1.0f);
+            mediaPlayer.start();
             });
     }
 
