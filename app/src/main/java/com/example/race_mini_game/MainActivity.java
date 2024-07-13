@@ -87,7 +87,9 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
                     movePlayerRight();
                 }
             });
+            moveDetector.start();
         }
+
         initializeViews();
 
         leaderboards = new Leaderboards(this);

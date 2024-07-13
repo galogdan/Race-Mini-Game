@@ -33,7 +33,8 @@ public class GameManager {      // Handles the game logic
     private static final long VIBRATION_DURATION = 500;
     private static final int MAX_OBSTACLES = 3;
     private static final long OBSTACLE_SPAWN_DELAY = 500; // 0.5 seconds
-    private static final long GAME_LOOP_DELAY = 8; // ~60 FPS
+    private static final long GAME_LOOP_DELAY = 8;
+
 
     private Context context;
     private RelativeLayout gameLayout;
@@ -427,6 +428,7 @@ public class GameManager {      // Handles the game logic
 
         }
     }
+
 
 
     public void release() {
