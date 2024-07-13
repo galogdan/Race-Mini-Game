@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Location permission denied. Cannot display map."
+        android:text="@string/location_permission_denied_map_cannot_be_displayed"
         android:visibility="gone" />
 
 </FrameLayout>

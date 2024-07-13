@@ -11,4 +11,8 @@
     <string name="normal_game">Normal Game</string>
     <string name="sensor_mode">Sensor Mode</string>
     <string name="leaderboards">Leaderboards</string>
+    <string name="menu">Menu</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="top_10_records">Top 10 Records</string>
+    <string name="location_permission_denied_map_cannot_be_displayed">Location permission denied. Map cannot be displayed.</string>
 </resources>

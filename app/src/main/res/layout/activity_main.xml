@@ -46,7 +46,10 @@
         android:textColor="@android:color/white"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/layout_margin"
+        android:layout_alignStart="@id/gameLayout"
         android:layout_marginTop="16dp"
+        android:background="@color/grey"
         android:text="@string/score_0"/>
 
     <com.google.android.material.textview.MaterialTextView
@@ -55,9 +58,11 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textColor="@android:color/white"
+        android:layout_alignStart="@id/gameLayout"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="48dp"
+        android:layout_marginStart="@dimen/layout_margin"
+        android:layout_marginTop="64dp"
         android:text="@string/distance_0km"/>
 
     <!-- Game Area -->
