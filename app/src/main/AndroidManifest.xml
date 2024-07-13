@@ -20,7 +20,7 @@
         tools:targetApi="31">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDzBpNPGfU1k3uIs4fWGzx9qN0wLhh9Sno"/>
+            android:value="API__KEY"/>
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
