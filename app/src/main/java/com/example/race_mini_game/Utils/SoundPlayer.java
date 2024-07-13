@@ -6,7 +6,7 @@ import android.media.MediaPlayer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class SoundPlayer {
+public class SoundPlayer {      // SoundPlayer for sound effects
 
     private Context context;
     private Executor executor;

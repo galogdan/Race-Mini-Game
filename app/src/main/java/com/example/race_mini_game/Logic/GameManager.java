@@ -17,17 +17,19 @@ import androidx.core.content.ContextCompat;
 
 import com.example.race_mini_game.Models.Leaderboards;
 import com.example.race_mini_game.R;
+import com.example.race_mini_game.Utils.SoundPlayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class GameManager {
+public class GameManager {      // Handles the game logic
+
     private static final String TAG = "GameManager";
     private static final int LANES = 5;
     private static final int INITIAL_LIVES = 3;
     private static final float OBSTACLE_SPAWN_CHANCE = 0.3f;
-    private static final float OBSTACLE_SPEED = 1000f;
+    private static final float OBSTACLE_SPEED = 600f;
     private static final long VIBRATION_DURATION = 500;
     private static final int MAX_OBSTACLES = 3;
     private static final long OBSTACLE_SPAWN_DELAY = 500; // 0.5 seconds
@@ -47,7 +49,7 @@ public class GameManager {
     private long lastCoinSpawnTime;
     private boolean isGameRunning;
     private Random random;
-    private MediaPlayer crashSound;
+    private SoundPlayer soundPlayer;
     private int playerWidth;
     private int playerHeight;
     private int obstacleWidth;
@@ -128,7 +130,7 @@ public class GameManager {
     }
 
     private void initializeSounds() {
-        crashSound = MediaPlayer.create(context, R.raw.crash_sound);
+        soundPlayer = new SoundPlayer(this.context) ;
     }
 
     private void initializeGameLoop() {
@@ -157,7 +159,6 @@ public class GameManager {
         }
 
         updatePlayerPosition();
-        Log.d(TAG, "Lane positions calculated: " + Arrays.toString(lanePositions));
     }
 
     public void updatePlayerPosition() {
@@ -201,13 +202,11 @@ public class GameManager {
         params.topMargin = -obstacleHeight;
         gameLayout.addView(obstacle, params);
         obstacles.add(obstacle);
-        Log.d(TAG, "Obstacle added to layout at X: " + params.leftMargin + ", Y: " + params.topMargin);
-        Log.d(TAG, "Obstacle spawned in lane " + lane + " with position " + targetX);
+
     }
 
     public void spawnCoin() {
         if (lanePositions == null || lanePositions.length == 0) {
-            Log.e(TAG, "Lane positions not initialized");
             return;
         }
 
@@ -222,8 +221,6 @@ public class GameManager {
         params.topMargin = -coinHeight;
         gameLayout.addView(coin, params);
         coins.add(coin);
-        Log.d(TAG, "Coin added to layout at X: " + params.leftMargin + ", Y: " + params.topMargin);
-        Log.d(TAG, "Coin spawned in lane " + lane + " with position " + targetX);
     }
 
     public boolean checkCollision() {
@@ -277,7 +274,7 @@ public class GameManager {
                 if (gameCallback != null) {
                     gameCallback.onScoreUpdated(score);
                 }
-                Toast.makeText(context, "Coin collected! Score: " + score, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Coin collected! Score: " + score, Toast.LENGTH_SHORT).show();
                 return true;
             }
         }
@@ -288,21 +285,15 @@ public class GameManager {
         lives--;
         updateLives();
 
-        playCrashSound();
+        soundPlayer.playSound(R.raw.crash_sound);
         vibrate();
+        soundPlayer.stopSound();
 
         // Show toast message on collision
         Toast.makeText(context, "Collision detected!", Toast.LENGTH_SHORT).show();
 
         if (lives <= 0) {
             gameOver();
-        }
-    }
-
-    private void playCrashSound() {
-        if (crashSound != null) {
-            crashSound.seekTo(0);
-            crashSound.start();
         }
     }
 
@@ -318,17 +309,13 @@ public class GameManager {
 
     public void gameOver() {
         isGameRunning = false;
-        Log.d("GameManager", "Game Over. Score: " + score);
         boolean isHighScore = leaderboards.isHighScore(score);
-        Log.d("GameManager", "Is High Score: " + isHighScore);
         if (isHighScore) {
             if (gameCallback != null) {
-                Log.d("GameManager", "Calling onNewHighScore");
                 gameCallback.onNewHighScore(score);
             }
         } else {
             if (gameCallback != null) {
-                Log.d("GameManager", "Calling onGameOver");
                 gameCallback.onGameOver(score);
             }
         }
@@ -337,14 +324,12 @@ public class GameManager {
     public void startGame() {
         isGameRunning = true;
         lastUpdateTime = SystemClock.elapsedRealtime();
-        Log.d(TAG, "Game started. isGameRunning set to true");
         initializeGame();
         gameLoopHandler.post(gameLoopRunnable);
     }
 
     public void stopGame() {
         isGameRunning = false;
-        Log.d(TAG, "Game stopped. isGameRunning set to false");
         gameLoopHandler.removeCallbacks(gameLoopRunnable);
     }
 
@@ -404,19 +389,15 @@ public class GameManager {
         float speed = OBSTACLE_SPEED;
         if (fastMode)
             speed += speed;
-        Log.d(TAG, "Update called with deltaTime: " + deltaTime);
         float deltaSeconds = deltaTime / 1000f;
         moveObstacles(deltaSeconds);
         moveCoins(deltaSeconds);
 
         long currentTime = SystemClock.elapsedRealtime();
-        Log.d(TAG, "Current Time: " + currentTime + ", Last Update Time: " + lastUpdateTime);
 
         if (currentTime - lastObstacleSpawnTime > OBSTACLE_SPAWN_DELAY && obstacles.size() < MAX_OBSTACLES) {
             float randomValue = random.nextFloat();
-            Log.d(TAG, "Random value for obstacle spawn: " + randomValue);
             if (randomValue < OBSTACLE_SPAWN_CHANCE) {
-                Log.d(TAG, "Spawning obstacle");
                 spawnObstacle();
                 lastObstacleSpawnTime = currentTime;  // Update the lastObstacleSpawnTime here
             }
@@ -436,6 +417,8 @@ public class GameManager {
         // Update distance
         distance += speed * deltaSeconds;
         if (distanceChangeListener != null) {
+            if (fastMode)
+                score += 2;
             score += 1;
             if (gameCallback != null) {
                 gameCallback.onScoreUpdated(score);
@@ -447,9 +430,9 @@ public class GameManager {
 
 
     public void release() {
-        if (crashSound != null) {
-            crashSound.release();
-            crashSound = null;
+        if (soundPlayer != null) {
+
+            soundPlayer = null;
         }
     }
 

@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MenuActivity extends AppCompatActivity {
+public class MenuActivity extends AppCompatActivity {       // Menu activity
 
     private static final String TAG = "MenuActivity";
     private Button startGameButton;
@@ -32,7 +34,7 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, MainActivity.class);
-                intent.putExtra("sensorMode", false);
+                intent.putExtra("fastMode", fastMode);
                 startActivity(intent);
             }
         });
@@ -43,6 +45,7 @@ public class MenuActivity extends AppCompatActivity {
                 Log.d(TAG, "Sensor Mode button clicked.");
                 Intent intent = new Intent(MenuActivity.this, MainActivity.class);
                 intent.putExtra("sensorMode", true);
+                intent.putExtra("fastMode", fastMode);
                 startActivity(intent);
             }
         });
@@ -53,15 +56,15 @@ public class MenuActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!fastMode) {
                     fastMode = true;
+                    fastSlowModeButton.setText(R.string.slow_mode);
                     Intent intent = new Intent(MenuActivity.this, MainActivity.class);
                     intent.putExtra("fastMode", true);
-                    startActivity(intent);
+                    //startActivity(intent);
                 }
                 else {
                     fastMode = false;
+                    fastSlowModeButton.setText(R.string.fast_mode);
                 }
-                Intent intent = new Intent(MenuActivity.this, MainActivity.class);
-                intent.putExtra("fastMode", false);
 
             }
         });

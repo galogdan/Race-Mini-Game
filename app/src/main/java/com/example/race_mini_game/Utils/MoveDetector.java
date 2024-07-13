@@ -6,8 +6,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import com.example.race_mini_game.Interfaces.MoveCallback;
 
-public class MoveDetector implements SensorEventListener {
-    private static final float MOVE_THRESHOLD = 2.0f; // Adjust this threshold as needed
+public class MoveDetector implements SensorEventListener {      // MoveDetector for sensor mode
+
+    private static final float MOVE_THRESHOLD = 2.5f; // Adjust this threshold as needed
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private MoveCallback moveCallback;
@@ -39,7 +40,6 @@ public class MoveDetector implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // No implementation needed
     }
 
 }

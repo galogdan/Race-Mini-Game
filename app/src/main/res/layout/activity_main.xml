@@ -4,7 +4,7 @@
     android:background="@drawable/five_lanes_new">
 
     <!-- Lives -->
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/livesLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,10 +35,10 @@
             android:layout_marginStart="@dimen/life_margin"
             android:src="@drawable/heart"
             android:contentDescription="@string/life"/>
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <!-- Score -->
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/scoreTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -47,9 +47,9 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:text="Score: 0"/>
+        android:text="@string/score_0"/>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/distanceTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="48dp"
-        android:text="Distance: 0m"/>
+        android:text="@string/distance_0km"/>
 
     <!-- Game Area -->
     <RelativeLayout
@@ -81,7 +81,7 @@
     </RelativeLayout>
 
     <!-- Control Buttons -->
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -104,5 +104,5 @@
             android:layout_height="wrap_content"
             android:text="@string/right"
             style="@style/CustomButtonStyle"/>
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </RelativeLayout>

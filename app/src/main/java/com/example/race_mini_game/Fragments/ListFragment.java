@@ -18,7 +18,7 @@ import com.example.race_mini_game.R;
 
 import java.util.List;
 
-public class ListFragment extends Fragment {
+public class ListFragment extends Fragment {    // Fragment list to show the leaderboards
     private Leaderboards leaderboards;
     private RecyclerView recyclerView;
     private RecordAdapter adapter;
@@ -35,7 +35,7 @@ public class ListFragment extends Fragment {
         if (context instanceof OnRecordSelectedListener) {
             listener = (OnRecordSelectedListener) context;
         } else {
-            throw new RuntimeException(context.toString() + " must implement OnScoreSelectedListener");
+            throw new RuntimeException(context.toString() + "OnScoreSelectedListener missing");
         }
     }
 
@@ -117,7 +117,6 @@ public class ListFragment extends Fragment {
                 }
             });
         }
-
 
 
         void bind(final Record record, int rank) {

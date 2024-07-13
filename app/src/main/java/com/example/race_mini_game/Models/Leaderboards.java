@@ -2,7 +2,6 @@ package com.example.race_mini_game.Models;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -11,10 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Leaderboards {
-    private static final String PREF_NAME = "ScorePreferences";
-    private static final String KEY_SCORES = "Scores";
-    private static final int MAX_SCORES = 10;
+public class Leaderboards {     // Leaderboards class
+
+    private static final String PREF_NAME = "Leaderboards";
+    private static final String KEY_RECORDS = "Records";
+    private static final int MAX_RECORDS = 10;
 
     private SharedPreferences sharedPreferences;
     private Gson gson;
@@ -25,7 +25,7 @@ public class Leaderboards {
     }
 
     public List<Record> getTopScores() {
-        String json = sharedPreferences.getString(KEY_SCORES, null);
+        String json = sharedPreferences.getString(KEY_RECORDS, null);
         Type type = new TypeToken<ArrayList<Record>>() {}.getType();
         List<Record> records = gson.fromJson(json, type);
 
@@ -34,25 +34,24 @@ public class Leaderboards {
         }
 
         Collections.sort(records);
-        return records.subList(0, Math.min(records.size(), MAX_SCORES));
+        return records.subList(0, Math.min(records.size(), MAX_RECORDS));
     }
 
     public boolean isHighScore(int score) {
         List<Record> topScores = getTopScores();
-        return topScores.isEmpty() || topScores.size() < MAX_SCORES || score > topScores.get(topScores.size() - 1).getScore();
+        return topScores.isEmpty() || topScores.size() < MAX_RECORDS || score > topScores.get(topScores.size() - 1).getScore();
     }
 
     public void addScore(String playerName, int score, double latitude, double longitude) {
-        Log.d("Adding Score"," " +latitude +"  "+ longitude);
         List<Record> scores = getTopScores();
         scores.add(new Record(playerName, score, latitude, longitude));
         Collections.sort(scores);
 
-        if (scores.size() > MAX_SCORES) {
-            scores = scores.subList(0, MAX_SCORES);
+        if (scores.size() > MAX_RECORDS) {
+            scores = scores.subList(0, MAX_RECORDS);
         }
 
         String json = gson.toJson(scores);
-        sharedPreferences.edit().putString(KEY_SCORES, json).apply();
+        sharedPreferences.edit().putString(KEY_RECORDS, json).apply();
     }
 }

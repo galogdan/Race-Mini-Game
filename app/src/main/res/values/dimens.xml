@@ -2,7 +2,7 @@
     <dimen name="button_margin_end">100dp</dimen>
     <dimen name="life_size">32dp</dimen>
     <dimen name="life_margin">4dp</dimen>
-    <dimen name="car_size">100dp</dimen>
+    <dimen name="car_size">65dp</dimen>
     <dimen name="layout_margin">16dp</dimen>
     <dimen name="layout_bottom_margin">16dp</dimen>
 

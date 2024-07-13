@@ -1,5 +1,6 @@
 package com.example.race_mini_game;
 
+import android.content.DialogInterface;
 import android.location.Location;
 import android.Manifest;
 import android.app.AlertDialog;
@@ -36,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
     private static final int PERMISSION_REQUEST_LOCATION = 1002;
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationClient;
-    private RelativeLayout mainLayout;
     private RelativeLayout gameLayout;
     private ImageView playerView;
     private Button leftButton, rightButton;
@@ -63,8 +63,8 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
 
 
         float density = getResources().getDisplayMetrics().density;
-        playerWidth = (int) (100f * density);
-        playerHeight = (int) (100f * density);
+        playerWidth = (int) (65f * density);
+        playerHeight = (int) (65f * density);
         obstacleWidth = (int) (30f * density);
         obstacleHeight = (int) (100f * density);
         coinWidth = (int) (30f * density); // Define coin width
@@ -214,27 +214,43 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
         builder.setTitle("New High Score!");
         builder.setMessage("Congratulations! You've achieved a high score of " + finalScore);
 
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_activity, null);
+        final EditText input = dialogView.findViewById(R.id.edit_text_player_name);
+        final TextView errorText = dialogView.findViewById(R.id.text_error_message);
+        builder.setView(dialogView);
 
-        builder.setPositiveButton("OK", (dialog, which) -> {
-            String playerName = input.getText().toString();
-            if (lastKnownLocation != null) {
-                leaderboards.addScore(playerName, finalScore, lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-            } else {
-                leaderboards.addScore(playerName, finalScore, 0, 0); // Use default coordinates if location is unavailable
-            }
-            openLeaderboard();
+        builder.setCancelable(false); // Prevent dialog from closing on outside touch
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", (dialogInterface, i) -> {
+            // This will be overridden
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
-            dialog.cancel();
+        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", (dialogInterface, i) -> {
+            dialog.dismiss();
             returnToMenu();
         });
 
-        builder.show();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String playerName = input.getText().toString().trim();
+            if (playerName.isEmpty()) {
+                errorText.setText("Please enter a name");
+                errorText.setVisibility(View.VISIBLE);
+            } else {
+                if (lastKnownLocation != null) {
+                    leaderboards.addScore(playerName, finalScore, lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                } else {
+                    leaderboards.addScore(playerName, finalScore, 0, 0); // Use default coordinates if location is unavailable
+                }
+                dialog.dismiss();
+                openLeaderboard();
+            }
+        });
     }
+
 
     private void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -273,7 +289,9 @@ public class MainActivity extends AppCompatActivity implements GameManager.GameC
                 .setPositiveButton("Restart", (dialog, id) -> restartGame())
                 .setNegativeButton("Main Menu", (dialog, id) -> returnToMenu());
 
+        builder.setCancelable(false);
         AlertDialog dialog = builder.create();
+
         dialog.show();
     }
 

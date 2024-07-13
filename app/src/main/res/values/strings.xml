@@ -4,4 +4,11 @@
     <string name="left">Left</string>
     <string name="right">Right</string>
     <string name="life">Right</string>
+    <string name="score_0">Score: 0</string>
+    <string name="distance_0km">Distance: 0Km</string>
+    <string name="fast_mode">Fast Mode</string>
+    <string name="slow_mode">Slow Mode</string>
+    <string name="normal_game">Normal Game</string>
+    <string name="sensor_mode">Sensor Mode</string>
+    <string name="leaderboards">Leaderboards</string>
 </resources>

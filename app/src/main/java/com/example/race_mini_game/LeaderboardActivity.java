@@ -19,6 +19,7 @@ import com.example.race_mini_game.Fragments.ListFragment;
 import com.example.race_mini_game.Models.Record;
 import com.example.race_mini_game.R;
 
+// Leaderboards Activity
 public class LeaderboardActivity extends AppCompatActivity implements ListFragment.OnRecordSelectedListener {
 
     private MapFragment mapFragment;

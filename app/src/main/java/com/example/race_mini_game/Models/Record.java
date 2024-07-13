@@ -1,6 +1,6 @@
 package com.example.race_mini_game.Models;
 
-public class Record implements Comparable<Record> {
+public class Record implements Comparable<Record> {     // Record class
 
     private String playerName;
     private int score;
